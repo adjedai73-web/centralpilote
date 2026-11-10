@@ -70,6 +70,8 @@ main{padding-block:16px 40px}
 /* Buttons & forms */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 14px;border-radius:3px;border:1px solid var(--line2);background:var(--panel2);cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap;transition:background .15s,border-color .15s}
 .btn:hover{border-color:var(--cyan);background:#10295a}
+a.btn{text-decoration:none;color:inherit}
+a.btn.ok{color:var(--ok)}
 .btn.primary{background:linear-gradient(180deg,#1d6dff,#1450c8);border-color:#3b86ff;color:#fff}
 .btn.primary:hover{background:linear-gradient(180deg,#2c7bff,#1a5ce0)}
 .btn.ok{border-color:rgba(47,230,160,.5);color:var(--ok);background:rgba(47,230,160,.08)}
@@ -868,6 +870,23 @@ Valeur (DA)|Value (DZD)|القيمة بالدينار
 Valeur totale du stock|Total stock value|القيمة الإجمالية للمخزون
 Rupture|Out of stock|نفاد
 Bienvenue|Welcome|مرحبا
+Paiement|Payment|الدفع
+Payé|Paid|مدفوع
+Non payé|Unpaid|غير مدفوع
+Enregistrer le paiement|Record payment|تسجيل الدفع
+Modifier le paiement|Edit payment|تعديل الدفع
+Encaissez le paiement avant d'accepter|Collect the payment before approving|استلم الدفع قبل القبول
+Mode de paiement|Payment method|طريقة الدفع
+Espèces|Cash|نقدا
+Virement bancaire|Bank transfer|تحويل بنكي
+CCP / BaridiMob|CCP / BaridiMob|CCP / بريدي موب
+Chèque|Cheque|شيك
+Carte bancaire|Bank card|بطاقة بنكية
+Référence (optionnel)|Reference (optional)|المرجع (اختياري)
+N° de reçu, de virement…|Receipt or transfer number…|رقم الوصل أو التحويل…
+Paiement enregistré|Payment recorded|تم تسجيل الدفع
+Appeler|Call|اتصال
+Copier|Copy|نسخ
 ERP multi-sites|Multi-site ERP|نظام ERP متعدد المواقع
 Tarif / point|Price / outlet|السعر / نقطة
 Devise|Currency|العملة
@@ -1451,9 +1470,9 @@ function viewAdmin(){const cs=DB.companies.slice().sort((a,b)=>b.createdAt-a.cre
   const nS=c=>DB.sites.filter(s=>s.companyId===c.id).length,set=DB.settings;
   const byCur=k=>PCUR.map(cc=>{const v=sum(act.filter(c=>c.plan===k&&priceCur(c)===cc),c=>nS(c)*prices(c)[k==='abonnement'?'abo':'lic']);return v?money(v,cc):''}).filter(Boolean).join(' · ')||money(0,'DZD');
   const stc={active:['c-ok','Actif'],pending:['c-warn','En attente'],refused:['c-muted','Refusé'],suspended:['c-crit','Suspendu']};
-  const row=c=>`<tr><td><b>${esc(c.name)}</b><br><small style="color:var(--muted)">${esc(c.sector)}</small></td><td>${esc(cname(c.country||'DZ'))}<br><small class="mono" style="color:var(--muted)">${esc(c.currency||'DZD')}</small></td><td>${esc(c.contact)}<br><small class="mono" style="color:var(--muted)">${esc(c.email)} · ${esc(c.phone)}</small></td><td>${c.plan==='abonnement'?'Abonnement':'Licence'}</td><td class="r num">${money(prices(c)[c.plan==='abonnement'?'abo':'lic'],priceCur(c))}${c.plan==='abonnement'?'<br><small style="color:var(--muted)">par mois</small>':''}</td><td class="r num">${nS(c)}</td><td class="r num">${companyWilayas(c.id).length}</td><td class="mono">${dt(c.createdAt)}</td><td><span class="chip ${stc[c.status][0]}">${stc[c.status][1]}</span></td>
-    <td class="r" style="white-space:nowrap">${c.status==='pending'?`<button class="btn sm ok" data-act="cstat" data-id="${c.id}" data-s="active">Accepter</button> <button class="btn sm danger" data-act="cstat" data-id="${c.id}" data-s="refused">Refuser</button>`:c.status==='active'?`<button class="btn sm" data-act="imp" data-id="${c.id}">Ouvrir</button> <button class="btn sm danger" data-act="cstat" data-id="${c.id}" data-s="suspended">Suspendre</button>`:`<button class="btn sm ok" data-act="cstat" data-id="${c.id}" data-s="active">Activer</button>`}</td></tr>`;
-  const head=`<thead><tr><th>Entreprise</th><th>Pays</th><th>Contact</th><th>Formule</th><th class="r">Tarif / point</th><th class="r">Points</th><th class="r">Wilayas</th><th>Inscription</th><th>Statut</th><th class="r">Actions</th></tr></thead>`;
+  const row=c=>`<tr><td><b>${esc(c.name)}</b><br><small style="color:var(--muted)">${esc(c.sector)}</small></td><td>${esc(cname(c.country||'DZ'))}<br><small class="mono" style="color:var(--muted)">${esc(c.currency||'DZD')}</small></td><td><b>${esc(c.contact)}</b><br><span class="mono" style="font-size:15px;color:#fff;white-space:nowrap">${esc(c.phone||'—')}</span><br><small class="mono" style="color:var(--muted)">${esc(c.email)}</small>${c.phone?`<div class="row" style="gap:6px;margin-top:6px;flex-wrap:nowrap"><a class="btn sm" href="tel:${esc(String(c.phone).replace(/[^\d+]/g,''))}">Appeler</a><a class="btn sm ok" href="https://wa.me/${esc(waNum(c.phone,c.country))}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm ghost" data-act="copy" data-txt="${esc(c.phone)}">Copier</button></div>`:''}</td><td>${c.plan==='abonnement'?'Abonnement':'Licence'}</td><td class="r num">${money(prices(c)[c.plan==='abonnement'?'abo':'lic'],priceCur(c))}${c.plan==='abonnement'?'<br><small style="color:var(--muted)">par mois</small>':''}</td><td class="r num">${nS(c)}</td><td class="r num">${companyWilayas(c.id).length}</td><td class="mono">${dt(c.createdAt)}</td><td>${c.payment&&c.payment.paid?`<span class="chip c-ok">Payé</span><br><small class="mono" style="color:var(--muted)">${money(c.payment.amount,c.payment.cur||priceCur(c))} · ${esc(c.payment.method||'')}<br>${dt(c.payment.t)}</small>`:`<span class="chip c-warn">Non payé</span>`}</td><td><span class="chip ${stc[c.status][0]}">${stc[c.status][1]}</span></td>
+    <td class="r" style="white-space:nowrap">${c.status==='pending'?`<button class="btn sm" data-act="pay" data-id="${c.id}">${c.payment&&c.payment.paid?'Modifier le paiement':'Enregistrer le paiement'}</button> <button class="btn sm ok" data-act="cstat" data-id="${c.id}" data-s="active" ${c.payment&&c.payment.paid?'':'disabled title="Encaissez le paiement avant d\'accepter"'}>Accepter</button> <button class="btn sm danger" data-act="cstat" data-id="${c.id}" data-s="refused">Refuser</button>`:c.status==='active'?`<button class="btn sm" data-act="imp" data-id="${c.id}">Ouvrir</button> <button class="btn sm danger" data-act="cstat" data-id="${c.id}" data-s="suspended">Suspendre</button>`:`<button class="btn sm ok" data-act="cstat" data-id="${c.id}" data-s="active">Activer</button>`}</td></tr>`;
+  const head=`<thead><tr><th>Entreprise</th><th>Pays</th><th>Contact</th><th>Formule</th><th class="r">Tarif / point</th><th class="r">Points</th><th class="r">Wilayas</th><th>Inscription</th><th>Paiement</th><th>Statut</th><th class="r">Actions</th></tr></thead>`;
   return `<div class="sec-title"><div><h1>Console plateforme</h1><p>Validez les inscriptions, suivez les abonnements et ouvrez le dashboard de chaque client.</p></div></div>
   <div class="kpis wide" style="margin-bottom:14px"><div class="kpi"><span class="lbl">Clients actifs</span><span class="num cy">${act.length}</span></div><div class="kpi"><span class="lbl">En attente</span><span class="num am">${pend.length}</span></div><div class="kpi"><span class="lbl">Points de vente</span><span class="num">${sum(act,nS)}</span></div><div class="kpi"><span class="lbl">Revenu abonnements</span><span class="num gr" style="font-size:15px;white-space:normal">${byCur('abonnement')}</span><small>par mois</small></div><div class="kpi"><span class="lbl">Licences vendues</span><span class="num" style="font-size:15px;white-space:normal">${byCur('licence')}</span></div></div>
   ${pend.length?`<div class="hud" style="margin-bottom:14px;border-color:rgba(255,197,61,.5)"><div class="hud-h"><h2>Demandes à valider</h2><span class="chip c-warn">${pend.length}</span></div><div class="tbl-wrap"><table class="data">${head}<tbody>${pend.map(row).join('')}</tbody></table></div></div>`:''}
@@ -1608,7 +1627,16 @@ function respForm(w,withSelect){const u=me(),c=co(u.companyId),used=companyWilay
   <button class="btn primary" type="submit">Créer l'accès</button></form>`);
   const sel=$('#w-sel');if(sel){const sync=()=>{$('#w-email').value='resp.'+slug(wfr(wk(sel.value)))+'@'+dom(c)},fill=()=>{const cc=$('#w-cc').value;sel.innerHTML=regionsOf(cc).filter(r=>!used.some(x=>String(x)===String(r.code))).map(r=>`<option value="${r.code}">${esc(regCode(r.code))} · ${esc(wname(r.code))}</option>`).join('');sync()};sel.addEventListener('change',sync);$('#w-cc').addEventListener('change',fill);fill()}}
 
+const waNum=(p,cc)=>{let d=String(p||'').replace(/[^\d+]/g,'');if(d.startsWith('+'))return d.slice(1);if(d.startsWith('00'))return d.slice(2);const code=({DZ:'213',MA:'212',TN:'216',FR:'33',BE:'32',ES:'34',IT:'39',DE:'49',EG:'20',SA:'966',AE:'971',TR:'90',SN:'221',CI:'225',QA:'974',GB:'44'})[cc]||'';return d.startsWith('0')&&code?code+d.slice(1):d};
+const PAY_METHODS=['Espèces','Virement bancaire','CCP / BaridiMob','Chèque','Carte bancaire'];
 const ACT={
+  pay:el=>{const c=co(el.dataset.id),p=c.payment||{},cur=priceCur(c),def=prices(c)[c.plan==='abonnement'?'abo':'lic'];
+    openModal(`<div class="modal-h"><h3>Paiement — ${esc(c.name)}</h3><button class="btn sm ghost" data-act="mclose">✕</button></div><form data-form="pay" class="stack"><input type="hidden" name="id" value="${c.id}">
+    <div class="notice">${esc(c.contact)} · <span class="mono">${esc(c.phone||'')}</span><br>Formule : ${c.plan==='abonnement'?'Abonnement':'Licence'} · tarif ${money(def,cur)} par point</div>
+    <div class="grid2"><label class="field"><span>Montant reçu (${esc(cur)})</span><input id="py-a" name="amount" type="number" min="0" step="0.01" required value="${p.amount!=null?p.amount:def}"></label>
+    <label class="field"><span>Mode de paiement</span><select id="py-m" name="method">${PAY_METHODS.map(m=>`<option ${p.method===m?'selected':''}>${m}</option>`).join('')}</select></label></div>
+    <label class="field"><span>Référence (optionnel)</span><input id="py-r" name="ref" value="${esc(p.ref||'')}" placeholder="N° de reçu, de virement…"></label>
+    <button class="btn primary" type="submit">Enregistrer le paiement</button></form>`)},
   ltab:el=>{S.ltab=el.dataset.t;S.signed=null;render()},
   demo:el=>{$('#l-email').value=el.dataset.e;$('#l-pass').value=el.dataset.p;$('#l-pass').focus()},
   go:el=>{S.view=el.dataset.v;S.drawer=null;render();window.scrollTo(0,0)},
@@ -1670,6 +1698,7 @@ const ACT={
   obdel:el=>{S.ob.sites=S.ob.sites.filter(s=>s.tmp!==el.dataset.t);render()},
 };
 const FORMS={
+  pay:(f,d)=>{const c=co(String(d.get('id')));if(!c)return;c.payment={paid:true,amount:Math.max(0,+d.get('amount')||0),cur:priceCur(c),method:String(d.get('method')),ref:String(d.get('ref')||'').trim(),t:now()};save();closeModal();render();toast('Paiement enregistré')},
   login:(f,d)=>{const e=String(d.get('email')).trim().toLowerCase(),p=String(d.get('pass')),u=DB.users.find(x=>x.email===e&&x.pass===p),err=$('#l-err');
     if(!u){err.textContent='Identifiant ou mot de passe incorrect.';return}
     if(u.role!=='super'){const c=co(u.companyId);if(c.status==='pending'){err.textContent="Compte en attente de validation par l'administrateur.";return}if(c.status==='refused'){err.textContent="Cette demande d'inscription a été refusée.";return}if(c.status==='suspended'){err.textContent="Compte suspendu. Contactez l'administrateur.";return}}
@@ -1823,6 +1852,7 @@ const after=(obj,key,f2)=>{const o=obj[key];obj[key]=(...a)=>{const r=o(...a);tr
 ['prob','resolve','note'].forEach(k=>after(FORMS,k,(f,d)=>{const o=DB.orders.find(x=>x.id===d.get('id'));if(o)upd('orders',o).catch(()=>{})}));
 after(FORMS,'expense',()=>{const e=DB.expenses[DB.expenses.length-1];if(e)ins('expenses',e).catch(()=>{})});
 after(FORMS,'tarifs',()=>{upd('settings',{data:DB.settings}).catch(()=>{})});
+after(FORMS,'pay',(f,d)=>{const c=co(String(d.get('id')));if(c)upd('companies',c).catch(()=>{})});
 delete ACT.demo;delete ACT.reset;delete ACT.doreset;delete ACT.live;
 ACT.menu=()=>{const u=me();openModal(`<div class="modal-h"><h3>Compte</h3><button class="btn sm ghost" data-act="mclose">✕</button></div><div class="stack"><dl class="kv"><dt>Utilisateur</dt><dd>${esc(u.impersonating?'Admin plateforme':u.name)}</dd><dt>Identifiant</dt><dd class="mono">${esc(u.email)}</dd></dl>
   <form data-form="mypw" class="stack"><label class="field"><span>Nouveau mot de passe (6 caractères minimum)</span><input id="mp-p" name="pass" type="password" minlength="6" required autocomplete="new-password"></label><button class="btn" type="submit">Changer mon mot de passe</button></form>
@@ -1850,7 +1880,7 @@ FORMS.order=async(f)=>{const u=me(),s=site(u.siteId),P=S.pos,loc=String(s.wil),c
   DB.orders.push(data);need&&Object.keys(need).forEach(pid=>{const L=(DB.stock[cid]=DB.stock[cid]||{})[loc]=(DB.stock[cid]||{})[loc]||{};L[pid]=(L[pid]||0)-need[pid]});
   S.pos={client:'',phone:'',mode:P.mode,note:'',items:[{pid:'',q:1}]};render();toast(`Commande ${data.num} enregistrée`);bonModal(data.id);softReload()};
 ACT.delexp=async el=>{const u=me(),i=DB.expenses.findIndex(e=>e.id===el.dataset.id&&e.siteId===u.siteId);if(i<0)return;try{await dbw(SB.from('expenses').delete().eq('id',el.dataset.id))}catch(e){return}DB.expenses.splice(i,1);render();toast('Dépense supprimée')};
-ACT.cstat=async el=>{const c=co(el.dataset.id),prev=c.status;c.status=el.dataset.s;try{await upd('companies',c)}catch(e){c.status=prev;render();return}render();toast(`${c.name} : ${{active:'activé',refused:'refusé',suspended:'suspendu'}[c.status]}`)};
+ACT.cstat=async el=>{const c=co(el.dataset.id),prev=c.status;if(el.dataset.s==='active'&&prev==='pending'&&!(c.payment&&c.payment.paid)){toast("Encaissez le paiement avant d'accepter",true);return}c.status=el.dataset.s;try{await upd('companies',c)}catch(e){c.status=prev;render();return}render();toast(`${c.name} : ${{active:'activé',refused:'refusé',suspended:'suspendu'}[c.status]}`)};
 ACT.rqsend=async el=>{const u=me(),r=DB.requests.find(x=>x.id===el.dataset.id);if(!r||u.role!=='central'||r.companyId!==u.companyId||r.status!=='attente')return;const have=stk(u.companyId,'central',r.pid);
   if(have<r.qty){toast(`Stock central insuffisant : ${fmt(have)} disponible(s)`,true);return}
   try{await adj(u.companyId,'central',r.pid,-r.qty);await adj(u.companyId,String(r.wil),r.pid,r.qty)}catch(e){return}
