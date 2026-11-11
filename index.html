@@ -1017,7 +1017,7 @@ const NEXT_LBL={preparation:'Passer en préparation',prete:'Marquer prête',livr
 function seed(){
   const r=rngf(20261110), pick=a=>a[Math.floor(r()*a.length)], ri=(a,b)=>Math.floor(a+r()*(b-a+1));
   const T=now(), D=86400000;
-  const db={v:3,settings:{prices:{DZD:{abo:49900,lic:69900},EUR:{abo:49,lic:990},USD:{abo:55,lic:1090}}},companies:[],users:[],sites:[],orders:[],expenses:[],products:[],stock:{},moves:[],requests:[]};
+  const db={v:3,settings:{prices:{DZD:{abo:49900,lic:69900},EUR:{abo:199,lic:399},USD:{abo:199,lic:399}}},companies:[],users:[],sites:[],orders:[],expenses:[],products:[],stock:{},moves:[],requests:[]};
   db.companies.push({id:'c1',name:'Groupe El Baraka Distribution',sector:'Distribution alimentaire',contact:'Direction Générale',phone:'0550 12 34 56',email:'direction@elbaraka.dz',plan:'abonnement',status:'active',createdAt:T-D*62,onboarded:true,slug:'elbaraka',country:'DZ',currency:'DZD'});
   db.companies.push({id:'c2',name:'Pizza Nova',sector:'Restauration',contact:'Samir Belkacem',phone:'0661 45 78 90',email:'contact@pizzanova.dz',plan:'licence',status:'pending',createdAt:T-3600000*5,onboarded:false,slug:'pizzanova',country:'DZ',currency:'DZD'});
   db.users.push({id:'u0',email:'admin@centralpilot.dz',pass:'admin123',name:'Admin plateforme',role:'super'});
@@ -1098,7 +1098,7 @@ function seedEU(db,r,T0){const pick=a=>a[Math.floor(r()*a.length)],ri=(a,b)=>Mat
   db.requests.push({id:uid('r'),companyId:CID,wil:'IT-25',pid:'q1',qty:60,status:'attente',t:T0-3*3600000,by:'Giulia Rossi',note:''});
 }
 
-function load(){try{DB=JSON.parse(localStorage.getItem(KEY))}catch(e){DB=null}if(!DB||DB.v!==3){DB=seed();save()}if(!DB.settings.prices){DB.settings.prices={DZD:{abo:DB.settings.abo||6000,lic:DB.settings.lic||120000},EUR:{abo:49,lic:990},USD:{abo:55,lic:1090}};save()}}
+function load(){try{DB=JSON.parse(localStorage.getItem(KEY))}catch(e){DB=null}if(!DB||DB.v!==3){DB=seed();save()}if(!DB.settings.prices){DB.settings.prices={DZD:{abo:DB.settings.abo||6000,lic:DB.settings.lic||120000},EUR:{abo:199,lic:399},USD:{abo:199,lic:399}};save()}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){toast("Impossible d'enregistrer dans ce navigateur",true)}}
 const co=id=>DB.companies.find(c=>c.id===id);
 const site=id=>DB.sites.find(s=>s.id===id);
