@@ -222,13 +222,14 @@ table.data tr.tot td{background:rgba(43,213,255,.1);font-weight:600;border-top:1
 .cbg{fill:#081631;stroke:#13305a;stroke-width:.6;vector-effect:non-scaling-stroke}
 .cof{fill:#0c2148;stroke:#1d4580;stroke-width:.8;vector-effect:non-scaling-stroke}
 .con{fill:#15386f;stroke:var(--cyan);stroke-width:1.4;vector-effect:non-scaling-stroke}
-.map svg.satok .cbg,.map svg.satok .cof,.map svg.satok .con{fill-opacity:0}
-.map svg.satok .cof{stroke:rgba(230,240,255,.45);stroke-width:.7}
+.map svg.satok .cbg,.map svg.satok .cof{fill-opacity:0}
+.map svg.satok .con{fill-opacity:.28}
+.map svg.satok .cof{stroke:#1d4580;stroke-width:.8}
 .map svg.satok .con{stroke:#2BD5FF;stroke-width:1.6}
-.map svg.satok .grat line{stroke:rgba(43,213,255,.18)}
+.map svg.satok .grat line{stroke:#112b52}
 .map svg.satok g.ov text{fill:#f1f6ff;paint-order:stroke;stroke:rgba(3,8,20,.85);stroke-width:.35em}
 .map svg g.sat image{image-rendering:auto}
-.map svg g.sat{filter:saturate(1.15) brightness(.82) contrast(1.06)}
+.map svg g.sat{filter:url(#cpTone)}
 .map-attr{position:absolute;right:10px;bottom:8px;font-size:10px;color:rgba(230,240,255,.75);text-shadow:0 1px 2px #000;display:none;pointer-events:none}
 .map.satok .map-attr{display:block}
 .map-ctrl button.on{background:var(--cyan);color:#04101f}
@@ -1144,13 +1145,13 @@ function fitPoints(key,pts,fallback){const st=mapState(key);if(!pts.length){if(f
   const xy=pts.map(p=>proj(p.lat,p.lng)),xs=xy.map(p=>p[0]),ys=xy.map(p=>p[1]);const w=Math.max(...xs)-Math.min(...xs),h=Math.max(...ys)-Math.min(...ys);
   st.cx=(Math.max(...xs)+Math.min(...xs))/2;st.cy=(Math.max(...ys)+Math.min(...ys))/2;st.z=Math.min(1200,Math.max(1,MW/(Math.max(w,h)*1.8+5)))}
 function mapBox(key,opts={}){return `<div class="map ${opts.pick?'pick':''}" data-map="${key}"><svg aria-label="Carte" role="img"></svg>
-  <div class="map-ctrl"><button data-mz="in" title="Zoomer" aria-label="Zoomer">+</button><button data-mz="out" title="Dézoomer" aria-label="Dézoomer">−</button><button data-mz="reset" title="Vue d'ensemble" aria-label="Vue d'ensemble">⌂</button><button data-mz="sat" title="Vue satellite" aria-label="Vue satellite" style="font-size:11px;font-weight:700">SAT</button></div><div class="map-attr"></div>
+  <div class="map-ctrl"><button data-mz="in" title="Zoomer" aria-label="Zoomer">+</button><button data-mz="out" title="Dézoomer" aria-label="Dézoomer">−</button><button data-mz="reset" title="Vue d'ensemble" aria-label="Vue d'ensemble">⌂</button><button data-mz="sat" title="Relief réel" aria-label="Relief réel" style="font-size:11px;font-weight:700">3D</button></div><div class="map-attr"></div>
   ${opts.hint?`<div class="map-hint">${opts.hint}</div>`:''}
   ${opts.legend===false?'':`<div class="map-legend"><span><i class="dot"></i>Opérationnel</span><span><i class="dot warn"></i>Retard</span><span><i class="dot crit"></i>Problème</span></div>`}</div>`}
 function pxu(svg,st){const r=svg.getBoundingClientRect();return (MW/st.z)/Math.max(1,Math.min(r.width,r.height))}
 
 /* ---------- Couche satellite (tuiles Web Mercator dans le repère de la carte) ---------- */
-const SAT={key:'',src(z,x,y){return this.key&&z>8?`https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}?token=${this.key}`:`https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/${z}/${y}/${x}.jpeg`},max(){return this.key?18:8},attr(){return this.key?'Imagery © Esri, Maxar, Earthstar Geographics':'Imagery: NASA Blue Marble'}};
+const SAT={key:'',src(z,x,y){return this.key&&z>8?`https://ibasemaps-api.arcgis.com/arcgis/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}?token=${this.key}`:`https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/GoogleMapsCompatible_Level8/${z}/${y}/${x}.jpeg`},max(){return this.key?18:8},attr(){return this.key?'Imagery © Esri, Maxar, Earthstar Geographics':'Relief: NASA Blue Marble'}};
 const satOn=()=>{try{return localStorage.getItem('cp_sat')!=='0'}catch(e){return true}};
 function satLayer(svg,box,st,x0,y0,vw,vh,u){let g=svg.querySelector('g.sat');if(!g)return;
   if(!satOn()){if(g.childNodes.length)g.textContent='';svg.classList.remove('satok');box.classList.remove('satok');return}
@@ -1175,7 +1176,7 @@ function drawMap(key){
   st.z=Math.max(1,Math.min(3000,st.z));st.cx=Math.max(0,Math.min(MW,st.cx));st.cy=Math.max(MH*0.08,Math.min(MH*0.75,st.cy));
   const vw=MW/st.z,vh=MH/st.z,x0=st.cx-vw/2,y0=st.cy-vh/2;svg.setAttribute('viewBox',`${x0.toFixed(3)} ${y0.toFixed(3)} ${vw.toFixed(3)} ${vh.toFixed(3)}`);
   const markers=cfg.markers?cfg.markers():[],active=[...new Set([...markers.map(m=>wcc(m.wil)),...(cfg.countries?cfg.countries():[])].filter(Boolean))].sort(),bk=active.join(',');
-  let ov=svg.querySelector('g.ov');if(!ov||svg.dataset.k!==bk){svg.dataset.k=bk;svg.innerHTML=`<g class="sat"></g><g class="base">${baseLayer(active)}</g><g class="ov"></g>`;ov=svg.querySelector('g.ov')}
+  let ov=svg.querySelector('g.ov');if(!ov||svg.dataset.k!==bk){svg.dataset.k=bk;svg.innerHTML=`<defs><filter id="cpTone" color-interpolation-filters="sRGB"><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncR type="table" tableValues="0.016 0.03 0.07 0.16 0.30"/><feFuncG type="table" tableValues="0.04 0.08 0.17 0.33 0.55"/><feFuncB type="table" tableValues="0.10 0.19 0.33 0.55 0.78"/></feComponentTransfer></filter></defs><g class="sat"></g><g class="base">${baseLayer(active)}</g><g class="ov"></g>`;ov=svg.querySelector('g.ov')}
   satLayer(svg,box,st,x0,y0,vw,vh,pxu(svg,st));box.querySelector('[data-mz="sat"]')?.classList.toggle('on',satOn());
   const u=pxu(svg,st),inV=(x,y,p)=>x>x0-p&&x<x0+vw+p&&y>y0-p&&y<y0+vh+p,used=new Set(markers.map(m=>String(m.wil)));let s='';
   const lvl=cfg.aggregate?(vw>=700&&active.length>1?'country':vw>=45?'region':'site'):'site';
