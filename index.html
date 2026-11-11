@@ -711,8 +711,8 @@ Suspendre|Suspend|إيقاف
 Activer|Activate|تفعيل
 Tarifs|Pricing|الأسعار
 Affichés aux nouveaux clients|Shown to new clients|تظهر للعملاء الجدد
-Abonnement (DA / point / mois)|Subscription (DZD / outlet / month)|الاشتراك (دج / نقطة / شهر)
-Licence (DA / point)|License (DZD / outlet)|الرخصة (دج / نقطة)
+Abonnement (DA / mois)|Subscription (DZD / month)|الاشتراك (دج / شهر)
+Licence (DA)|License (DZD)|الرخصة (دج)
 Enregistrer|Save|حفظ
 Abonnement|Subscription|اشتراك
 Licence|License|رخصة
@@ -723,10 +723,10 @@ Configurez votre réseau en 4 étapes. Vous pourrez ajouter des wilayas et des p
 Validation|Confirmation|التأكيد
 Formule 1|Plan 1|الصيغة 1
 Formule 2|Plan 2|الصيغة 2
-/ point / mois|/ outlet / month|/ نقطة / شهر
-/ point, paiement unique|/ outlet, one-time payment|/ نقطة، دفع مرة واحدة
+/ mois · tous les points|/ month · all outlets|/ شهر · كل النقاط
+paiement unique · tous les points|one-time payment · all outlets|دفع مرة واحدة · كل النقاط
 Mises à jour et support inclus|Updates and support included|التحديثات والدعم مشمولة
-Ajout ou retrait de points à tout moment|Add or remove outlets anytime|إضافة أو حذف نقاط في أي وقت
+Points de vente illimités, prix fixe|Unlimited outlets, fixed price|نقاط بيع غير محدودة، سعر ثابت
 Hébergement et sauvegardes inclus|Hosting and backups included|الاستضافة والنسخ الاحتياطي مشمولة
 Le logiciel vous appartient|You own the software|البرنامج ملك لك
 Installation et formation incluses|Installation and training included|التثبيت والتكوين مشمولان
@@ -888,13 +888,13 @@ Paiement enregistré|Payment recorded|تم تسجيل الدفع
 Appeler|Call|اتصال
 Copier|Copy|نسخ
 ERP multi-sites|Multi-site ERP|نظام ERP متعدد المواقع
-Tarif / point|Price / outlet|السعر / نقطة
+Tarif|Price|السعر
 Devise|Currency|العملة
 Zone|Zone|المنطقة
 Algérie|Algeria|الجزائر
 Afrique et Asie|Africa and Asia|أفريقيا وآسيا
-Abonnement / point / mois|Subscription / outlet / month|الاشتراك / نقطة / شهر
-Licence / point|License / outlet|الرخصة / نقطة
+Abonnement / mois|Subscription / month|الاشتراك / شهر
+Licence (paiement unique)|License (one-time)|الرخصة (دفع مرة واحدة)
 Enregistrer les tarifs|Save pricing|حفظ الأسعار
 Algérie en DA · Europe en euro · reste de l'Afrique et Asie en dollar|Algeria in DZD · Europe in euro · rest of Africa and Asia in US dollar|الجزائر بالدينار · أوروبا باليورو · باقي أفريقيا وآسيا بالدولار
 Copier|Copy|نسخ
@@ -1267,8 +1267,8 @@ function viewOnboarding(u){
   const ob=obInit(u),c=co(u.companyId),st=['Formule','Wilayas','Points de vente','Validation'];
   let body='';
   if(ob.step===1)body=`<div class="plans">
-    <button class="plan ${ob.plan==='abonnement'?'on':''}" data-act="obplan" data-p="abonnement"><span class="lbl">Formule 1</span><h3>Abonnement</h3><div class="price">${money(prices(c).abo,priceCur(c))} <small class="lbl">/ point / mois</small></div><ul><li>Mises à jour et support inclus</li><li>Ajout ou retrait de points à tout moment</li><li>Hébergement et sauvegardes inclus</li></ul></button>
-    <button class="plan ${ob.plan==='licence'?'on':''}" data-act="obplan" data-p="licence"><span class="lbl">Formule 2</span><h3>Licence (achat)</h3><div class="price">${money(prices(c).lic,priceCur(c))} <small class="lbl">/ point, paiement unique</small></div><ul><li>Le logiciel vous appartient</li><li>Installation et formation incluses</li><li>Maintenance annuelle en option</li></ul></button></div>`;
+    <button class="plan ${ob.plan==='abonnement'?'on':''}" data-act="obplan" data-p="abonnement"><span class="lbl">Formule 1</span><h3>Abonnement</h3><div class="price">${money(prices(c).abo,priceCur(c))} <small class="lbl">/ mois · tous les points</small></div><ul><li>Mises à jour et support inclus</li><li>Points de vente illimités, prix fixe</li><li>Hébergement et sauvegardes inclus</li></ul></button>
+    <button class="plan ${ob.plan==='licence'?'on':''}" data-act="obplan" data-p="licence"><span class="lbl">Formule 2</span><h3>Licence (achat)</h3><div class="price">${money(prices(c).lic,priceCur(c))} <small class="lbl">paiement unique · tous les points</small></div><ul><li>Le logiciel vous appartient</li><li>Installation et formation incluses</li><li>Maintenance annuelle en option</li></ul></button></div>`;
   if(ob.step===2){ob.cc=ob.cc||c.country||'DZ';const q=norm(ob.q).toLowerCase(),regs=regionsOf(ob.cc);body=`<div class="row" style="margin-bottom:12px"><label class="field"><span>Pays</span>${countrySel('ob-cc','obcc',ob.cc)}</label><label class="field"><span>Rechercher une wilaya</span><input id="ob-q" data-on="obq" value="${esc(ob.q)}" placeholder="Ex. Oran, 31…"></label><div class="field" style="flex:0 0 auto"><span>&nbsp;</span><span class="chip c-ok" id="ob-count">${ob.wils.length} sélectionnée(s)</span></div></div>
     ${ob.wils.length?`<div class="wtabs">${ob.wils.map(x=>`<button data-act="obunsel" data-w="${x}">${esc(wname(x))} <small>${wcc(x)}</small> ✕</button>`).join('')}</div>`:''}
     <div class="wgrid" id="wgrid">${regs.filter(r=>!q||norm(r.name).toLowerCase().includes(q)||norm(wname(r.code)).toLowerCase().includes(q)||String(regCode(r.code)).toLowerCase().startsWith(q)).map(r=>`<label><input type="checkbox" data-on="obwil" value="${r.code}" ${ob.wils.some(x=>String(x)===String(r.code))?'checked':''}><i>${esc(regCode(r.code))}</i>${esc(wname(r.code))}</label>`).join('')}</div>`}
@@ -1285,7 +1285,7 @@ function viewOnboarding(u){
       <label class="field"><span>Adresse</span><input id="d-addr" data-on="obdraft" data-k="addr" value="${esc(ob.draft.addr)}" placeholder="Rue, quartier, commune"></label>
       <button class="btn primary" data-act="obadd">Ajouter ce point</button>
       <div class="slist">${ws.map(s=>`<div><span><b>${esc(s.name)}</b><small>${esc(s.addr||'')} · ${s.lat.toFixed(4)}, ${s.lng.toFixed(4)}</small></span><button class="btn sm danger" data-act="obdel" data-t="${s.tmp}">Retirer</button></div>`).join('')||'<div class="empty">Aucun point pour cette wilaya.</div>'}</div></div></div></div></div>`}
-  if(ob.step===4){const accts=obAccounts(c);body=`<div class="notice">Formule : <b>${ob.plan==='abonnement'?'Abonnement — '+money(prices(c).abo*ob.sites.length,priceCur(c))+' / mois':'Licence — '+money(prices(c).lic*ob.sites.length,priceCur(c))+' (paiement unique)'}</b> · ${ob.wils.length} wilaya(s) · ${ob.sites.length} point(s) de vente</div>
+  if(ob.step===4){const accts=obAccounts(c);body=`<div class="notice">Formule : <b>${ob.plan==='abonnement'?'Abonnement — '+money(prices(c).abo,priceCur(c))+' / mois':'Licence — '+money(prices(c).lic,priceCur(c))+' (paiement unique)'}</b> · ${ob.wils.length} wilaya(s) · ${ob.sites.length} point(s) de vente</div>
     <p style="color:var(--muted)">Voici les accès qui seront créés. Notez-les ou retrouvez-les ensuite dans « Réseau & comptes ».</p>
     <div class="tbl-wrap"><table class="data"><thead><tr><th>Accès</th><th>Périmètre</th><th>Identifiant</th><th>Mot de passe</th></tr></thead><tbody>
     ${accts.map(a=>`<tr><td>${a.type}</td><td>${esc(a.scope)}</td><td class="acc">${esc(a.email)}</td><td class="acc">${esc(a.pass)}</td></tr>`).join('')}</tbody></table></div>`}
@@ -1468,17 +1468,17 @@ function viewReseau(u){const isC=u.role==='central',cid=u.companyId,H=healthOf(m
 /* ---------- Console admin ---------- */
 function viewAdmin(){const cs=DB.companies.slice().sort((a,b)=>b.createdAt-a.createdAt),act=cs.filter(c=>c.status==='active'),pend=cs.filter(c=>c.status==='pending');
   const nS=c=>DB.sites.filter(s=>s.companyId===c.id).length,set=DB.settings;
-  const byCur=k=>PCUR.map(cc=>{const v=sum(act.filter(c=>c.plan===k&&priceCur(c)===cc),c=>nS(c)*prices(c)[k==='abonnement'?'abo':'lic']);return v?money(v,cc):''}).filter(Boolean).join(' · ')||money(0,'DZD');
+  const byCur=k=>PCUR.map(cc=>{const v=sum(act.filter(c=>c.plan===k&&priceCur(c)===cc),c=>prices(c)[k==='abonnement'?'abo':'lic']);return v?money(v,cc):''}).filter(Boolean).join(' · ')||money(0,'DZD');
   const stc={active:['c-ok','Actif'],pending:['c-warn','En attente'],refused:['c-muted','Refusé'],suspended:['c-crit','Suspendu']};
   const row=c=>`<tr><td><b>${esc(c.name)}</b><br><small style="color:var(--muted)">${esc(c.sector)}</small></td><td>${esc(cname(c.country||'DZ'))}<br><small class="mono" style="color:var(--muted)">${esc(c.currency||'DZD')}</small></td><td><b>${esc(c.contact)}</b><br><span class="mono" style="font-size:15px;color:#fff;white-space:nowrap">${esc(c.phone||'—')}</span><br><small class="mono" style="color:var(--muted)">${esc(c.email)}</small>${c.phone?`<div class="row" style="gap:6px;margin-top:6px;flex-wrap:nowrap"><a class="btn sm" href="tel:${esc(String(c.phone).replace(/[^\d+]/g,''))}">Appeler</a><a class="btn sm ok" href="https://wa.me/${esc(waNum(c.phone,c.country))}" target="_blank" rel="noopener">WhatsApp</a><button class="btn sm ghost" data-act="copy" data-txt="${esc(c.phone)}">Copier</button></div>`:''}</td><td>${c.plan==='abonnement'?'Abonnement':'Licence'}</td><td class="r num">${money(prices(c)[c.plan==='abonnement'?'abo':'lic'],priceCur(c))}${c.plan==='abonnement'?'<br><small style="color:var(--muted)">par mois</small>':''}</td><td class="r num">${nS(c)}</td><td class="r num">${companyWilayas(c.id).length}</td><td class="mono">${dt(c.createdAt)}</td><td>${c.payment&&c.payment.paid?`<span class="chip c-ok">Payé</span><br><small class="mono" style="color:var(--muted)">${money(c.payment.amount,c.payment.cur||priceCur(c))} · ${esc(c.payment.method||'')}<br>${dt(c.payment.t)}</small>`:`<span class="chip c-warn">Non payé</span>`}</td><td><span class="chip ${stc[c.status][0]}">${stc[c.status][1]}</span></td>
     <td class="r" style="white-space:nowrap">${c.status==='pending'?`<button class="btn sm" data-act="pay" data-id="${c.id}">${c.payment&&c.payment.paid?'Modifier le paiement':'Enregistrer le paiement'}</button> <button class="btn sm ok" data-act="cstat" data-id="${c.id}" data-s="active" ${c.payment&&c.payment.paid?'':'disabled title="Encaissez le paiement avant d\'accepter"'}>Accepter</button> <button class="btn sm danger" data-act="cstat" data-id="${c.id}" data-s="refused">Refuser</button>`:c.status==='active'?`<button class="btn sm" data-act="imp" data-id="${c.id}">Ouvrir</button> <button class="btn sm danger" data-act="cstat" data-id="${c.id}" data-s="suspended">Suspendre</button>`:`<button class="btn sm ok" data-act="cstat" data-id="${c.id}" data-s="active">Activer</button>`}</td></tr>`;
-  const head=`<thead><tr><th>Entreprise</th><th>Pays</th><th>Contact</th><th>Formule</th><th class="r">Tarif / point</th><th class="r">Points</th><th class="r">Wilayas</th><th>Inscription</th><th>Paiement</th><th>Statut</th><th class="r">Actions</th></tr></thead>`;
+  const head=`<thead><tr><th>Entreprise</th><th>Pays</th><th>Contact</th><th>Formule</th><th class="r">Tarif</th><th class="r">Points</th><th class="r">Wilayas</th><th>Inscription</th><th>Paiement</th><th>Statut</th><th class="r">Actions</th></tr></thead>`;
   return `<div class="sec-title"><div><h1>Console plateforme</h1><p>Validez les inscriptions, suivez les abonnements et ouvrez le dashboard de chaque client.</p></div></div>
   <div class="kpis wide" style="margin-bottom:14px"><div class="kpi"><span class="lbl">Clients actifs</span><span class="num cy">${act.length}</span></div><div class="kpi"><span class="lbl">En attente</span><span class="num am">${pend.length}</span></div><div class="kpi"><span class="lbl">Points de vente</span><span class="num">${sum(act,nS)}</span></div><div class="kpi"><span class="lbl">Revenu abonnements</span><span class="num gr" style="font-size:15px;white-space:normal">${byCur('abonnement')}</span><small>par mois</small></div><div class="kpi"><span class="lbl">Licences vendues</span><span class="num" style="font-size:15px;white-space:normal">${byCur('licence')}</span></div></div>
   ${pend.length?`<div class="hud" style="margin-bottom:14px;border-color:rgba(255,197,61,.5)"><div class="hud-h"><h2>Demandes à valider</h2><span class="chip c-warn">${pend.length}</span></div><div class="tbl-wrap"><table class="data">${head}<tbody>${pend.map(row).join('')}</tbody></table></div></div>`:''}
   <div class="hud"><div class="hud-h"><h2>Tous les clients</h2></div><div class="tbl-wrap"><table class="data">${head}<tbody>${cs.map(row).join('')}</tbody></table></div></div>
   <div class="hud mt14" style="max-width:760px"><div class="hud-h"><h2>Tarifs</h2><span class="sub">Algérie en DA · Europe en euro · reste de l'Afrique et Asie en dollar</span></div><form data-form="tarifs" class="stack">
-    <div class="tbl-wrap"><table class="data" style="min-width:520px"><thead><tr><th>Devise</th><th>Zone</th><th class="r">Abonnement / point / mois</th><th class="r">Licence / point</th></tr></thead><tbody>
+    <div class="tbl-wrap"><table class="data" style="min-width:520px"><thead><tr><th>Devise</th><th>Zone</th><th class="r">Abonnement / mois</th><th class="r">Licence (paiement unique)</th></tr></thead><tbody>
     ${[['DZD','Algérie'],['EUR','Europe'],['USD','Afrique et Asie']].map(([cc,z])=>{const v=(DB.settings.prices||{})[cc]||{abo:0,lic:0};return `<tr><td class="mono">${cc}</td><td>${z}</td><td class="r"><input id="t-abo-${cc}" name="abo-${cc}" type="number" min="0" step="0.01" value="${v.abo}" style="max-width:150px" aria-label="Abonnement ${cc}"></td><td class="r"><input id="t-lic-${cc}" name="lic-${cc}" type="number" min="0" step="0.01" value="${v.lic}" style="max-width:150px" aria-label="Licence ${cc}"></td></tr>`}).join('')}
     </tbody></table></div><button class="btn primary" type="submit" style="align-self:flex-start">Enregistrer les tarifs</button></form></div>`}
 /* ---------- Stock ---------- */
@@ -1632,7 +1632,7 @@ const PAY_METHODS=['Espèces','Virement bancaire','CCP / BaridiMob','Chèque','C
 const ACT={
   pay:el=>{const c=co(el.dataset.id),p=c.payment||{},cur=priceCur(c),def=prices(c)[c.plan==='abonnement'?'abo':'lic'];
     openModal(`<div class="modal-h"><h3>Paiement — ${esc(c.name)}</h3><button class="btn sm ghost" data-act="mclose">✕</button></div><form data-form="pay" class="stack"><input type="hidden" name="id" value="${c.id}">
-    <div class="notice">${esc(c.contact)} · <span class="mono">${esc(c.phone||'')}</span><br>Formule : ${c.plan==='abonnement'?'Abonnement':'Licence'} · tarif ${money(def,cur)} par point</div>
+    <div class="notice">${esc(c.contact)} · <span class="mono">${esc(c.phone||'')}</span><br>Formule : ${c.plan==='abonnement'?'Abonnement':'Licence'} · tarif ${money(def,cur)} (tout le réseau)</div>
     <div class="grid2"><label class="field"><span>Montant reçu (${esc(cur)})</span><input id="py-a" name="amount" type="number" min="0" step="0.01" required value="${p.amount!=null?p.amount:def}"></label>
     <label class="field"><span>Mode de paiement</span><select id="py-m" name="method">${PAY_METHODS.map(m=>`<option ${p.method===m?'selected':''}>${m}</option>`).join('')}</select></label></div>
     <label class="field"><span>Référence (optionnel)</span><input id="py-r" name="ref" value="${esc(p.ref||'')}" placeholder="N° de reçu, de virement…"></label>
