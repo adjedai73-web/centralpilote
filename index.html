@@ -1029,7 +1029,7 @@ const NEXT_LBL={preparation:'Passer en préparation',prete:'Marquer prête',livr
 function seed(){
   const r=rngf(20261110), pick=a=>a[Math.floor(r()*a.length)], ri=(a,b)=>Math.floor(a+r()*(b-a+1));
   const T=now(), D=86400000;
-  const db={v:3,settings:{prices:{DZD:{abo:49900,lic:69900},EUR:{abo:199,lic:399},USD:{abo:199,lic:399}}},companies:[],users:[],sites:[],orders:[],expenses:[],products:[],stock:{},moves:[],requests:[]};
+  const db={v:3,settings:{prices:{DZD:{abo:29900,lic:69900},EUR:{abo:199,lic:399},USD:{abo:199,lic:399}}},companies:[],users:[],sites:[],orders:[],expenses:[],products:[],stock:{},moves:[],requests:[]};
   db.companies.push({id:'c1',name:'Groupe El Baraka Distribution',sector:'Distribution alimentaire',contact:'Direction Générale',phone:'0550 12 34 56',email:'direction@elbaraka.dz',plan:'abonnement',status:'active',createdAt:T-D*62,onboarded:true,slug:'elbaraka',country:'DZ',currency:'DZD'});
   db.companies.push({id:'c2',name:'Pizza Nova',sector:'Restauration',contact:'Samir Belkacem',phone:'0661 45 78 90',email:'contact@pizzanova.dz',plan:'licence',status:'pending',createdAt:T-3600000*5,onboarded:false,slug:'pizzanova',country:'DZ',currency:'DZD'});
   db.users.push({id:'u0',email:'admin@centralpilot.dz',pass:'admin123',name:'Admin plateforme',role:'super'});
